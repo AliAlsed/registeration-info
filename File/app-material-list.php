@@ -210,6 +210,38 @@ include('MainPage.php');
                                                     </div>
                                                 </td>
 
+                                            <td>
+                                                <br>
+                                                <center>
+                                                                                                        <div class="ag-btns d-flex flex-wrap ">
+
+                                                        <div class="action-btns">
+                                                            <div class="btn-dropdown ">
+
+                                                                <div class="btn-group dropdown actions-dropodown">
+
+                                                                    <button type="button" class="btn btn-white px-2 py-75 dropdown-toggle waves-effect waves-light" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                                        Actions
+                                                                    </button>
+                                                                    <div class="dropdown-menu">
+                                                                        <a class="dropdown-item" href="<?php echo 'AddDegreeMaterial.php?id=' . $maty_data['ID'] ; ?>"><i class="feather icon-plus"></i>
+                                                                            درجات السعي </a>
+                                                                        <a class="dropdown-item" href="<?php echo 'app-Upload-list.php?id=' .  $maty_data['ID']; ?>"><i class="feather icon-list"></i> اضافة الطلاب المحملين </a>
+                                                                        <a class="dropdown-item" href="<?php echo 'displaymiddigree.php?id=' .  $maty_data['ID']; ?>"><i class="feather icon-list"></i> عرض درجات السعي </a>
+                                                                        <a class="dropdown-item" href="<?php echo 'AddFDegreeMaterial.php?id=' . $maty_data['ID']; ?>"><i class="feather icon-plus"></i>
+                                                                            الدرجة النهائية </a>
+                                                                        <a class="dropdown-item" href="<?php echo 'AddFDegreeMaterial2.php?id=' . $maty_data['ID']; ?>"><i class="feather icon-plus"></i>
+                                                                            درجه امتحان الدور الثاني </a>
+                                                                        <a class="dropdown-item" href="<?php echo 'AddFDegreeMaterial3.php?id=' . $maty_data['ID']; ?>"><i class="feather icon-plus"></i>
+                                                                            درجه امتحان الدور الثالث </a>
+                                                                        <a class="dropdown-item" href="<?php echo 'displayfinaldigree.php?id=' .  $maty_data['ID']; ?>"><i class="feather icon-list"></i> عرض الدرجات النهائية </a>
+                                                                    </div>
+                                                                </div>
+                                                    </div>
+                                                        </div>
+                                                </center>
+                                                    </td>
+
 </tr>
 
 

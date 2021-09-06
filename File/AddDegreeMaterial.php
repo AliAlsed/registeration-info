@@ -116,58 +116,6 @@ include('MainPage.php');
                         </div>
 
                 </div>
-                <!-- users filter start -->
-                <div class="card">
-
-                    <div class="card-content collapse show">
-                        <div class="card-body">
-                            <div class="container">
-                                <h1> رفع الدرجات عن طريق الاكسل</h1>
-                                <br>
-
-                                <form method="POST" action="uploadstudentdegreeexcel.php" enctype="multipart/form-data">
-
-
-
-                                    <div class="custom-file">
-
-                                        <input type="heddin" id="MaterialID" name="MaterialID" value="<?php echo $_GET['id']; ?>" />
-                                        <select name="YearID" id="YearID" class="form-control" required>
-                                            <option disabled selected value> السنه الدراسية </option>
-                                            <?php
-                                            include('../connect.php');
-
-                                            $sql = "SELECT * FROM `Years` ";
-                                            $yearresult = mysqli_query($link, $sql);
-                                            if (mysqli_num_rows($yearresult) > 0) {
-                                                // output data of each row
-                                                while ($years = mysqli_fetch_assoc($yearresult)) {
-                                                    $num = $years["ID"] . "<br>";
-                                                    $name = $years["Name"] . "<br>";
-                                                    echo "<option value='$num'>" . $name . "</option>";
-                                                }
-                                            } else {
-                                                echo "0 results";
-                                            }
-                                            ?>
-                                        </select>
-                                        <input type="file" class="custom-file-input" id="inputGroupFile01" name="uploadFile">
-                                        <label class="custom-file-label" for="inputGroupFile01">Choose file</label>
-                                    </div>
-                                    <br>
-                                    <div class="form-group">
-                                        <button type="submit" name="submit" class="btn btn-success">Upload</button>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!-- users filter end -->
-
-
-                <!-- Ag Grid users list section start -->
-
 
 
                 <!-- users list start -->
@@ -208,22 +156,23 @@ include('MainPage.php');
 
                                             <?php
                                             $subject = $_GET['id'];
-                                            $year = $_GET['yid'];
+                                            $year=(int)$_SESSION['year'];
                                             include("../connect.php");
                                             $q = "SELECT students.Name as Name, students.ID as ID, 
                                             students.Department_Id as Department_Id,
-                                            stustatus.level as level, stustatus.Year as Year,  stustatus.uploaded as uploaded,
+                                            studentstatus.level as level, studentstatus.Year as Year,  studentstatus.uploaded as uploaded,
                                             degree.MidDegree as middegree 
                                             FROM students
-                                            LEFT JOIN stustatus ON students.ID=stustatus.StuID and stustatus.Year = '$year' and stustatus.level=$stg
+                                            JOIN studentstatus ON students.ID=studentstatus.Stu_Id 
                                             LEFT JOIN degree ON students.ID=degree.StuID and degree.MatID = '$subject' 
                                             where Department_Id =$depn  
                                             ";
+    echo $q;
                                             $stu = mysqli_query($link, $q);
                                             $i = 1;
                                             $counts = "SELECT count(*) as result FROM students 
-                                            LEFT JOIN stustatus ON students.ID=stustatus.StuID and stustatus.Year = '$year' and stustatus.level=$stg
-                                            where Department_Id =$depn  ";
+                                            LEFT JOIN studentstatus ON students.ID=studentstatus.Stu_Id and studentstatus.Year = '$year' and studentstatus.level=$stg
+                                            where Department_Id =$depn";
                                             $std_count = mysqli_query($link, $counts);
                                             $total = mysqli_fetch_assoc($std_count);
 
@@ -250,7 +199,7 @@ include('MainPage.php');
                                                     </th>
                                                     <th scope="row">
                                                         <center>
-                                                            <?php if($stu_data['uploaded']){
+                                                            <?php if($stu_data['uploaded'] == 2){
                                                                 ?>
                                                                 <p style="color:red"> * </p><?php
                                                             }

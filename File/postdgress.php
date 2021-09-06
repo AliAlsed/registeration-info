@@ -1,5 +1,5 @@
-
 <?php
+session_start();
 include('../connect.php');
 global $degress;
 
@@ -8,7 +8,7 @@ function checkgrade($id, $material)
 {
     include('../connect.php');
 
-    $sql = "SELECT * FROM `pursuitdegree` where  Material_Id = '$material' and Student_Id = '$id' ";
+    $sql = "SELECT * FROM `degree` where MatID='$material' and StuID= '$id' ";
     $degress = mysqli_query($link, $sql);
 
     $row = mysqli_num_rows($degress);
@@ -25,7 +25,7 @@ function checkgrade($id, $material)
 
 if (isset($_POST['submit'])) {
     $material = intval(trim($_POST['material']));
-    $year = intval($_POST['year']);
+    $year=(int)$_SESSION['yearofmat'];
 
     for ($i = 1; $i <= $_POST['total']; $i++) {
         // echo $_POST['id' . $i] . '<br>';
@@ -34,17 +34,20 @@ if (isset($_POST['submit'])) {
 
         $ch = checkgrade($id, $material);
         if ($ch) {
-            $sql = "UPDATE pursuitdegree SET Degree = '$degree' where Student_Id='$id' and Material_Id = '$material' ";
+            $sql = "UPDATE degree SET Degree = '$degree' where Student_Id='$id' and Material_Id = '$material' ";
             if ($link->query($sql) === TRUE) {
                 header('Location: AddDegreeMaterial.php?id=' . $material);
             }
         } else {
-            $sql = "INSERT INTO pursuitdegree (Degree,Material_Id,Student_Id,Year_Id)
+            
+            $sql = "INSERT INTO degree (MidDegree,MatID,StuID,YearID)
             VALUES ('$degree','$material','$id', '$year')";
 
 
             if ($link->query($sql) === TRUE) {
                 header('Location: AddDegreeMaterial.php?id=' . $material);
+            }else{
+                echo $link->error;
             }
         }
     }
