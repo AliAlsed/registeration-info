@@ -1,7 +1,7 @@
 <?php
 session_start();
 $activepage = "app-Material-list";
-include('MainPage.php');
+include "MainPage.php";
 ?>
 <!-- END: Main Menu-->
 
@@ -65,44 +65,54 @@ include('MainPage.php');
         <div class="content-body">
             <section class="users-list-wrapper2">
                 <div class="card">
-                    <?php $sql = "SELECT * FROM materials where ID =" . $_GET['id'];
+                    <?php
+                    $sql = "SELECT * FROM materials where ID =" . $_GET["id"];
                     $material = mysqli_query($link, $sql);
-                    while ($material_data =  mysqli_fetch_array($material)) {
-                        $nm = $material_data['AName'];
-                        $depn = $material_data['Department_Id'];
-                        $stg = $material_data['Level_Id'];
-                        $co = $material_data['Course_Id'];
-                        $degree = $material_data['HighestDegreeCourse'];
+                    while ($material_data = mysqli_fetch_array($material)) {
 
-                    ?>
+                      $nm = $material_data["AName"];
+                      $depn = $material_data["Department_Id"];
+                      $stg = $material_data["Level_Id"];
+                      $co = $material_data["Course_Id"];
+                      $degree = $material_data["HighestDegreeCourse"];
+                      ?>
                         <div class="card-header">
 
                             <p> اضافة درجات سعي الطلاب <br>
 
-                                <?php $sqld = "SELECT * FROM departments where ID = $depn";
+                                <?php
+                                $sqld = "SELECT * FROM departments where ID = $depn";
                                 $dep = mysqli_query($link, $sqld);
-                                while ($dep_data =  mysqli_fetch_array($dep)) {
+                                while (
+                                  $dep_data = mysqli_fetch_array($dep)
+                                ) { ?>
+                                    لقسم <?php echo $dep_data["Name"]; ?>
+                                <?php }
                                 ?>
-                                    لقسم <?php echo $dep_data['Name'] ?>
-                                <?php } ?>
                                 <br>
-                                <?php $sqls = "SELECT * FROM levels where ID = $stg";
+                                <?php
+                                $sqls = "SELECT * FROM levels where ID = $stg";
                                 $stgs = mysqli_query($link, $sqls);
-                                while ($stgs_data =  mysqli_fetch_array($stgs)) {
+                                while (
+                                  $stgs_data = mysqli_fetch_array($stgs)
+                                ) { ?>
+                                    مرحلة <?php echo $stgs_data["Name"]; ?>
+                                <?php }
                                 ?>
-                                    مرحلة <?php echo $stgs_data['Name'] ?>
-                                <?php } ?>
                                 <br>
-                                <?php $sqlc = "SELECT * FROM courses where ID = $co";
+                                <?php
+                                $sqlc = "SELECT * FROM courses where ID = $co";
                                 $cou = mysqli_query($link, $sqlc);
-                                while ($cou_data =  mysqli_fetch_array($cou)) {
-                                ?>
+                                while (
+                                  $cou_data = mysqli_fetch_array($cou)
+                                ) { ?>
 
-                                    الكورس <?php echo $cou_data['Name'] ?>
-                                <?php } ?>
+                                    الكورس <?php echo $cou_data["Name"]; ?>
+                                <?php }
+                                ?>
                                 <br>
 
-                                لمادة <?php echo $nm ?>
+                                لمادة <?php echo $nm; ?>
 
 
                             </p>
@@ -155,9 +165,9 @@ include('MainPage.php');
                                         <tbody>
 
                                             <?php
-                                            $subject = $_GET['id'];
-                                            $year=(int)$_SESSION['year'];
-                                            include("../connect.php");
+                                            $subject = $_GET["id"];
+                                            $year = (int) $_SESSION["year"];
+                                            include "../connect.php";
                                             $q = "SELECT students.Name as Name, students.ID as ID, 
                                             students.Department_Id as Department_Id,
                                             studentstatus.level as level, studentstatus.Year as Year,  studentstatus.uploaded as uploaded,
@@ -167,59 +177,79 @@ include('MainPage.php');
                                             LEFT JOIN degree ON students.ID=degree.StuID and degree.MatID = '$subject' 
                                             where Department_Id =$depn  
                                             ";
-    echo $q;
+
                                             $stu = mysqli_query($link, $q);
                                             $i = 1;
                                             $counts = "SELECT count(*) as result FROM students 
                                             LEFT JOIN studentstatus ON students.ID=studentstatus.Stu_Id and studentstatus.Year = '$year' and studentstatus.level=$stg
                                             where Department_Id =$depn";
-                                            $std_count = mysqli_query($link, $counts);
-                                            $total = mysqli_fetch_assoc($std_count);
-
+                                            $std_count = mysqli_query(
+                                              $link,
+                                              $counts
+                                            );
+                                            $total = mysqli_fetch_assoc(
+                                              $std_count
+                                            );
                                             ?>
-                                            <input type="hidden" name="total" value="<?php echo $total['result'] ?>">
-                                            <input type="hidden" name="material" value="<?php echo $_GET['id']; ?>">
+                                            <input type="hidden" name="total" value="<?php echo $total[
+                                              "result"
+                                            ]; ?>">
+                                            <input type="hidden" name="material" value="<?php echo $_GET[
+                                              "id"
+                                            ]; ?>">
 
-                                            <?php
-                                            while ($stu_data =  mysqli_fetch_array($stu)) {
-
-
-                                            ?>
+                                            <?php while (
+                                              $stu_data = mysqli_fetch_array(
+                                                $stu
+                                              )
+                                            ) { ?>
                                                 <tr>
                                                     <th scope="row">
                                                         <center>
-                                                            <?php echo $i ?>
+                                                            <?php echo $i; ?>
                                                         </center>
                                                     </th>
 
                                                     <th scope="row">
                                                         <center>
-                                                            <?php echo $stu_data['Name'] . ' - ' . $stu_data['Year'] ?>
+                                                            <?php echo $stu_data[
+                                                              "Name"
+                                                            ] .
+                                                              " - " .
+                                                              $stu_data[
+                                                                "Year"
+                                                              ]; ?>
                                                         </center>
                                                     </th>
                                                     <th scope="row">
                                                         <center>
-                                                            <?php if($stu_data['uploaded'] == 2){
-                                                                ?>
-                                                                <p style="color:red"> * </p><?php
-                                                            }
-                                                              ?>
+                                                            <?php if (
+                                                              $stu_data[
+                                                                "uploaded"
+                                                              ] == 2
+                                                            ) { ?>
+                                                                <p style="color:red"> * </p><?php } ?>
                                                         </center>
                                                     </th>
                                                     <th scop="row">
                                                         <center>
-                                                            <input type="hidden" name="id<?php echo $i ?>" value="<?php echo $stu_data['ID'] ?>">
-                                                            <input type="number" name="inputdegree<?php echo $stu_data['ID'] ?>" id="inputdegree<?php echo $stu_data['ID'] ?>" class="form-control input-mar" style="margin-bottom: 10px;" placeholder="درجة السعي" max="<?php echo $degree ?>" min="0" value="<?php echo $stu_data['middegree']; ?>">
+                                                            <input type="hidden" name="id<?php echo $i; ?>" value="<?php echo $stu_data[
+  "ID"
+]; ?>">
+                                                            <input type="number" name="inputdegree<?php echo $stu_data[
+                                                              "ID"
+                                                            ]; ?>" id="inputdegree<?php echo $stu_data[
+  "ID"
+]; ?>" class="form-control input-mar" style="margin-bottom: 10px;" placeholder="درجة السعي" max="<?php echo $degree; ?>" min="0" value="<?php echo $stu_data[
+  "middegree"
+]; ?>">
                                                         </center>
 
                                                     </th>
 
 
                                                 </tr>
-                                            <?php
-                                                $i++;
-                                            }
-                                            ?>
+                                            <?php $i++;} ?>
                                  
                                         </tbody>
                                     </table>
@@ -228,7 +258,9 @@ include('MainPage.php');
                         </div>
                     </div>
 
-                <?php } ?>
+                <?php
+                    }
+                    ?>
 
                 <button class="btn btn-primary m-2" name="submit" type="submit"> حفظ </button>
 

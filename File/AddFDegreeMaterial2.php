@@ -1,7 +1,7 @@
 <?php
 session_start();
 $activepage = "app-Material-list";
-include('MainPage.php');
+include "MainPage.php";
 ?>
 <!-- END: Main Menu-->
 
@@ -69,44 +69,54 @@ include('MainPage.php');
         <div class="content-body">
             <section class="users-list-wrapper2">
                 <div class="card">
-                    <?php $sql = "SELECT * FROM materials where ID =" . $_GET['id'];
+                    <?php
+                    $sql = "SELECT * FROM materials where ID =" . $_GET["id"];
                     $material = mysqli_query($link, $sql);
-                    while ($material_data =  mysqli_fetch_array($material)) {
-                        $nm = $material_data['AName'];
-                        $depn = $material_data['Department_Id'];
-                        $stg = $material_data['Level_Id'];
-                        $co = $material_data['Course_Id'];
-                        $degree = $material_data['HighestDegreeCourse'];
+                    while ($material_data = mysqli_fetch_array($material)) {
 
-                    ?>
+                      $nm = $material_data["AName"];
+                      $depn = $material_data["Department_Id"];
+                      $stg = $material_data["Level_Id"];
+                      $co = $material_data["Course_Id"];
+                      $degree = $material_data["HighestDegreeCourse"];
+                      ?>
                         <div class="card-header">
 
                             <p> اضافة الدرجة النهائية للطلاب <br>
 
-                                <?php $sqld = "SELECT * FROM departments where ID = $depn";
+                                <?php
+                                $sqld = "SELECT * FROM departments where ID = $depn";
                                 $dep = mysqli_query($link, $sqld);
-                                while ($dep_data =  mysqli_fetch_array($dep)) {
+                                while (
+                                  $dep_data = mysqli_fetch_array($dep)
+                                ) { ?>
+                                    لقسم <?php echo $dep_data["Name"]; ?>
+                                <?php }
                                 ?>
-                                    لقسم <?php echo $dep_data['Name'] ?>
-                                <?php } ?>
                                 <br>
-                                <?php $sqls = "SELECT * FROM levels where ID = $stg";
+                                <?php
+                                $sqls = "SELECT * FROM levels where ID = $stg";
                                 $stgs = mysqli_query($link, $sqls);
-                                while ($stgs_data =  mysqli_fetch_array($stgs)) {
+                                while (
+                                  $stgs_data = mysqli_fetch_array($stgs)
+                                ) { ?>
+                                    مرحلة <?php echo $stgs_data["Name"]; ?>
+                                <?php }
                                 ?>
-                                    مرحلة <?php echo $stgs_data['Name'] ?>
-                                <?php } ?>
                                 <br>
-                                <?php $sqlc = "SELECT * FROM courses where ID = $co";
+                                <?php
+                                $sqlc = "SELECT * FROM courses where ID = $co";
                                 $cou = mysqli_query($link, $sqlc);
-                                while ($cou_data =  mysqli_fetch_array($cou)) {
-                                ?>
+                                while (
+                                  $cou_data = mysqli_fetch_array($cou)
+                                ) { ?>
 
-                                    الكورس <?php echo $cou_data['Name'] ?>
-                                <?php } ?>
+                                    الكورس <?php echo $cou_data["Name"]; ?>
+                                <?php }
+                                ?>
                                 <br>
 
-                                لمادة <?php echo $nm ?>
+                                لمادة <?php echo $nm; ?>
 
 
                             </p>
@@ -121,47 +131,7 @@ include('MainPage.php');
 
                 </div>
                 <!-- users filter start -->
-                <div class="card">
 
-                    <div class="card-content collapse show">
-                        <div class="card-body">
-                            <div class="container">
-                                <h1> رفع الدرجات عن طريق الاكسل</h1>
-                                <br>
-                                <form method="POST" action="uploadstudentFdegreeexcel.php" enctype="multipart/form-data">
-                                    <div class="custom-file">
-                                        <input type="heddin" id="MaterialID" name="MaterialID" value="<?php echo $_GET['id']; ?>" />
-                                        <select name="RoundID" id="RoundID" class="form-control" required>
-                                            <option disabled selected value> الدور </option>
-                                            <?php
-                                            include('../connect.php');
-
-                                            $sql = "SELECT * FROM `rounds` ";
-                                            $yearresult = mysqli_query($link, $sql);
-                                            if (mysqli_num_rows($yearresult) > 0) {
-                                                // output data of each row
-                                                while ($years = mysqli_fetch_assoc($yearresult)) {
-                                                    $num = $years["ID"] . "<br>";
-                                                    $name = $years["Name"] . "<br>";
-                                                    echo "<option value='$num'>" . $name . "</option>";
-                                                }
-                                            } else {
-                                                echo "0 results";
-                                            }
-                                            ?>
-                                        </select>
-                                        <input type="file" class="custom-file-input" id="inputGroupFile01" name="uploadFile">
-                                        <label class="custom-file-label" for="inputGroupFile01">Choose file</label>
-                                    </div>
-                                    <br>
-                                    <div class="form-group">
-                                        <button type="submit" name="submit" class="btn btn-success">Upload</button>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                </div>
                 <!-- users filter end -->
                 <!-- Ag Grid users list section start -->
                 <!-- users list start -->
@@ -201,55 +171,95 @@ include('MainPage.php');
                                         <tbody>
 
                                             <?php
-                                            $subject = $_GET['id'];
-                                            include("../connect.php");
+                                            $subject = $_GET["id"];
+                                            include "../connect.php";
 
-                                            $sqlquery = "SELECT students.ID,students.Name , finaldegree.Degree as degfin , finaldegree.Round_Id as Rid ,finaldegree.Material_Id as mid , finaldegree.added_degree as addedfin , pursuitdegree.Degree as purdeg from students INNER JOIN pursuitdegree on pursuitdegree.Student_Id=students.ID and pursuitdegree.Material_Id = '$subject ' INNER JOIN finaldegree on finaldegree.Student_Id = students.ID and finaldegree.Material_Id = '$subject' where finaldegree.Round_Id = '1'";
+                                            $sqlquery =
+                                              "SELECT degree.ID,degree.StuID,degree.MidDegree,degree.DecisionDegree,degree.FinalDR1,degree.FinalDR2,students.Name FROM degree JOIN students ON degree.StuID=students.ID WHERE degree.MatID=" .
+                                              $_GET["id"];
 
-
-                                            $sql = "SELECT * FROM students where Department_Id =$depn  && Stage=$stg";
-
-                                            $stu = mysqli_query($link, $sqlquery);
+                                            $stu = mysqli_query(
+                                              $link,
+                                              $sqlquery
+                                            );
                                             $i = 1;
-                                            $counts = "SELECT count(*) as result FROM students where Department_Id =$depn  && Stage=$stg";
-                                            $std_count = mysqli_query($link, $counts);
-                                            $total = mysqli_fetch_assoc($std_count);
-
+                                            $counts =
+                                              "SELECT count(*) as result FROM degree JOIN students ON degree.StuID=students.ID WHERE degree.MatID=" .
+                                              $_GET["id"];
+                                            $std_count = mysqli_query(
+                                              $link,
+                                              $counts
+                                            );
+                                            $total = mysqli_fetch_assoc(
+                                              $std_count
+                                            );
                                             ?>
-                                            <input type="hidden" name="total" value="<?php echo $total['result'] ?>">
-                                            <input type="hidden" name="material" value="<?php echo $_GET['id']; ?>">
+                                            <input type="hidden" name="total" value="<?php echo $total[
+                                              "result"
+                                            ]; ?>">
+                                            <input type="hidden" name="material" value="<?php echo $_GET[
+                                              "id"
+                                            ]; ?>">
 
-                                            <?php
-                                            while ($stu_data =  mysqli_fetch_array($stu)) {
-                                                if (isset($stu_data['addedfin'])) {
-                                                    $total = intval($stu_data['degfin']) + intval($stu_data['purdeg']) + intval($stu_data['addedfin']);
-                                                } else {
-                                                    $total = intval($stu_data['degfin']) + intval($stu_data['purdeg']);
-                                                }
-                                                if ($total < 50) {
-                                            ?>
+                                            <?php while (
+                                              $stu_data = mysqli_fetch_array(
+                                                $stu
+                                              )
+                                            ) {
+                                              if (
+                                                isset(
+                                                  $stu_data["DecisionDegree"]
+                                                )
+                                              ) {
+                                                $total =
+                                                  intval(
+                                                    $stu_data["FinalDR1"]
+                                                  ) +
+                                                  intval(
+                                                    $stu_data["MidDegree"]
+                                                  ) +
+                                                  intval(
+                                                    $stu_data["DecisionDegree"]
+                                                  );
+                                              } else {
+                                                $total =
+                                                  intval(
+                                                    $stu_data["MidDegree"]
+                                                  ) +
+                                                  intval($stu_data["FinalDR1"]);
+                                              }
+                                              if ($total < 50) { ?>
 
 
 
                                                     <tr>
                                                         <th scope="row">
                                                             <center>
-                                                                <?php echo $i ?>
+                                                                <?php echo $i; ?>
                                                             </center>
                                                         </th>
 
                                                         <th scope="row">
                                                             <center>
-                                                                <?php echo $stu_data['Name'];
-                                                                ?>
+                                                                <?php echo $stu_data[
+                                                                  "Name"
+                                                                ]; ?>
 
 
                                                             </center>
                                                         </th>
                                                         <th scop="row">
                                                             <center>
-                                                                <input type="hidden" name="id<?php echo $i ?>" value="<?php echo $stu_data['ID'] ?>">
-                                                                <input type="number" name="inputdegree<?php echo $stu_data['ID'] ?>" id="inputdegree<?php echo $stu_data['ID'] ?>" value="<?php echo $stu_data['findegree'] ?>" class="form-control input-mar" style="margin-bottom: 10px;" placeholder="الدرجة النهائية" max="<?php echo $degree ?>" min="0">
+                                                                <input type="hidden" name="id<?php echo $i; ?>" value="<?php echo $stu_data[
+  "StuID"
+]; ?>">
+                                                                <input type="number" name="inputdegree<?php echo $stu_data[
+                                                                  "StuID"
+                                                                ]; ?>" id="inputdegree<?php echo $stu_data[
+  "StuID"
+]; ?>" value="<?php echo $stu_data[
+  "FinalDR2"
+]; ?>" class="form-control input-mar" style="margin-bottom: 10px;" placeholder="الدرجة الدور الثاني" max="<?php echo $degree; ?>" min="0">
 
                                                             </center>
 
@@ -258,11 +268,8 @@ include('MainPage.php');
 
 
                                                     </tr>
-                                            <?php
-                                                    $i++;
-                                                }
-                                            }
-                                            ?>
+                                            <?php $i++;}
+                                            } ?>
 
                                         </tbody>
                                     </table>
@@ -271,7 +278,9 @@ include('MainPage.php');
                         </div>
                     </div>
 
-                <?php } ?>
+                <?php
+                    }
+                    ?>
 
                 <button class="btn btn-primary m-2" name="submit" type="submit"> حفظ </button>
 

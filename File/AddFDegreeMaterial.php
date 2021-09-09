@@ -1,7 +1,7 @@
 <?php
 session_start();
 $activepage = "app-Material-list";
-include('MainPage.php');
+include "MainPage.php";
 ?>
 <!-- END: Main Menu-->
 
@@ -69,44 +69,54 @@ include('MainPage.php');
         <div class="content-body">
             <section class="users-list-wrapper2">
                 <div class="card">
-                    <?php $sql = "SELECT * FROM materials where ID =" . $_GET['id'];
+                    <?php
+                    $sql = "SELECT * FROM materials where ID =" . $_GET["id"];
                     $material = mysqli_query($link, $sql);
-                    while ($material_data =  mysqli_fetch_array($material)) {
-                        $nm = $material_data['AName'];
-                        $depn = $material_data['Department_Id'];
-                        $stg = $material_data['Level_Id'];
-                        $co = $material_data['Course_Id'];
-                        $degree = $material_data['HighestDegreeCourse'];
+                    while ($material_data = mysqli_fetch_array($material)) {
 
-                    ?>
+                      $nm = $material_data["AName"];
+                      $depn = $material_data["Department_Id"];
+                      $stg = $material_data["Level_Id"];
+                      $co = $material_data["Course_Id"];
+                      $degree = $material_data["HighestDegreeCourse"];
+                      ?>
                         <div class="card-header">
 
                             <p> اضافة الدرجة النهائية للطلاب <br>
 
-                                <?php $sqld = "SELECT * FROM departments where ID = $depn";
+                                <?php
+                                $sqld = "SELECT * FROM departments where ID = $depn";
                                 $dep = mysqli_query($link, $sqld);
-                                while ($dep_data =  mysqli_fetch_array($dep)) {
+                                while (
+                                  $dep_data = mysqli_fetch_array($dep)
+                                ) { ?>
+                                    لقسم <?php echo $dep_data["Name"]; ?>
+                                <?php }
                                 ?>
-                                    لقسم <?php echo $dep_data['Name'] ?>
-                                <?php } ?>
                                 <br>
-                                <?php $sqls = "SELECT * FROM levels where ID = $stg";
+                                <?php
+                                $sqls = "SELECT * FROM levels where ID = $stg";
                                 $stgs = mysqli_query($link, $sqls);
-                                while ($stgs_data =  mysqli_fetch_array($stgs)) {
+                                while (
+                                  $stgs_data = mysqli_fetch_array($stgs)
+                                ) { ?>
+                                    مرحلة <?php echo $stgs_data["Name"]; ?>
+                                <?php }
                                 ?>
-                                    مرحلة <?php echo $stgs_data['Name'] ?>
-                                <?php } ?>
                                 <br>
-                                <?php $sqlc = "SELECT * FROM courses where ID = $co";
+                                <?php
+                                $sqlc = "SELECT * FROM courses where ID = $co";
                                 $cou = mysqli_query($link, $sqlc);
-                                while ($cou_data =  mysqli_fetch_array($cou)) {
-                                ?>
+                                while (
+                                  $cou_data = mysqli_fetch_array($cou)
+                                ) { ?>
 
-                                    الكورس <?php echo $cou_data['Name'] ?>
-                                <?php } ?>
+                                    الكورس <?php echo $cou_data["Name"]; ?>
+                                <?php }
+                                ?>
                                 <br>
 
-                                لمادة <?php echo $nm ?>
+                                لمادة <?php echo $nm; ?>
 
 
                             </p>
@@ -130,19 +140,21 @@ include('MainPage.php');
             <section class="users-list-wrapper">
                 <!-- users filter start -->
                 <form method="post" action="postfdgress.php">
+                    <?php
+                    $counter =
+                      "select count(*) as result FROM degree JOIN students ON degree.StuID=students.ID WHERE degree.MatID=" .
+                      $_GET["id"];
+                    $std_count = mysqli_query($link, $counter);
+                    $total = mysqli_fetch_assoc($std_count);
+                    ?>
 
-
-                    <div class="card">
-
-                        <div class="form-label-group p-3">
-                            <select name="round" class="form-control" required>
-                                <option disabled selected value> الدور </option>
-                                <option   value=1> الاول </option>
-                                <option   value=2> الثاني </option>
-                                <option   value=3> الثالث </option>
-                            </select>
-                        </div>
-                    </div>
+                
+                    <input type="hidden" name="material" value="<?php echo $_GET[
+                      "id"
+                    ]; ?>">
+                    <input type="hidden" name="total" value="<?php echo $total[
+                      "result"
+                    ]; ?>">
                     <div class="card">
                         <div class="card-content collapse show">
 
@@ -163,23 +175,55 @@ include('MainPage.php');
                                             </tr>
                                         </thead>
                                         <tbody>
+                                            <?php
+                                            $sql =
+                                              "SELECT degree.ID,degree.StuID,degree.FinalDR1,students.Name FROM degree JOIN students ON degree.StuID=students.ID WHERE degree.MatID=" .
+                                              $_GET["id"];
+                                            $students = mysqli_query(
+                                              $link,
+                                              $sql
+                                            );
+                                            $i = 1;
+                                            while (
+                                              $student_list = mysqli_fetch_assoc(
+                                                $students
+                                              )
+                                            ) { ?>
+                                         
                                             <tr>
                                                 <th scope="row">
                                                     <center>
-                                                        
+                                                   <?php echo $i; ?>
                                                     </center>
                                                 </th>
                                                 <th scope="row">
                                                     <center>
-
+                                                    <?php echo $student_list[
+                                                      "Name"
+                                                    ]; ?>
                                                     </center>
                                                 </th>
                                                 <th scop="row">
                                                     <center>
+                                                    <input type="hidden" name="id<?php echo $i; ?>" value="<?php echo $student_list[
+  "StuID"
+]; ?>
+?>">
+
+                                                    <input type="number" name="inputdegree<?php echo $student_list[
+                                                      "StuID"
+                                                    ]; ?>" id="inputdegree<?php echo $student_list[
+  "StuID"
+]; ?>" 
+class="form-control input-mar" style="margin-bottom: 10px;" placeholder="درجة الفاينل" max="<?php echo $degree; ?>" min="0" value="<?php echo $student_list[
+  "FinalDR1"
+]; ?>" required>
 
                                                     </center>
                                                 </th>
                                             </tr>
+                                            <?php $i++;}
+                                            ?>
                                        
                                         </tbody>
                                     </table>
@@ -188,7 +232,9 @@ include('MainPage.php');
                         </div>
                     </div>
 
-                <?php } ?>
+                <?php
+                    }
+                    ?>
 
                 <button class="btn btn-primary m-2" name="submit" type="submit"> حفظ </button>
 
